@@ -11,19 +11,48 @@ interface SidebarProps {
 export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
   const { user } = useAuth();
 
-  const clientLinks = [
-    { href: '/dashboard', icon: Icons.home, label: 'Overview' },
-    { href: '/projects', icon: Icons.folder, label: 'Projects' },
-    { href: '/messages', icon: Icons.message, label: 'Messages' },
+  const clientNavItems = [
+    {
+      title: 'Dashboard',
+      href: '/dashboard',
+      icon: Icons.home,
+    },
+    {
+      title: 'My Projects',
+      href: '/projects/manage',
+      icon: Icons.folder,
+    },
+    {
+      title: 'Profile',
+      href: '/profile',
+      icon: Icons.user,
+    },
   ];
 
-  const freelancerLinks = [
-    { href: '/dashboard', icon: Icons.home, label: 'Overview' },
-    { href: '/jobs', icon: Icons.briefcase, label: 'Find Jobs' },
-    { href: '/messages', icon: Icons.message, label: 'Messages' },
+  const freelancerNavItems = [
+    {
+      title: 'Dashboard',
+      href: '/dashboard',
+      icon: Icons.home,
+    },
+    {
+      title: 'Find Projects',
+      href: '/projects',
+      icon: Icons.search,
+    },
+    {
+      title: 'My Applications',
+      href: '/projects/applications',
+      icon: Icons.fileText,
+    },
+    {
+      title: 'Profile',
+      href: '/profile',
+      icon: Icons.user,
+    },
   ];
 
-  const links = user?.userType === 'client' ? clientLinks : freelancerLinks;
+  const navItems = user?.userType === 'client' ? clientNavItems : freelancerNavItems;
 
   return (
     <>
@@ -42,10 +71,10 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
         </div>
 
         <nav className='flex-1 space-y-1 p-4'>
-          {links.map((link) => (
+          {navItems.map((item) => (
             <NavLink
-              key={link.href}
-              to={link.href}
+              key={item.href}
+              to={item.href}
               className={({ isActive }) =>
                 cn(
                   'flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors',
@@ -53,8 +82,8 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
                 )
               }
             >
-              <link.icon className={cn('h-5 w-5', isOpen ? 'mr-3' : 'mr-0')} />
-              {isOpen && <span>{link.label}</span>}
+              <item.icon className={cn('h-5 w-5', isOpen ? 'mr-3' : 'mr-0')} />
+              {isOpen && <span>{item.title}</span>}
             </NavLink>
           ))}
         </nav>

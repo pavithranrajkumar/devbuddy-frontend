@@ -1,34 +1,21 @@
 import { Routes, Route, Navigate } from 'react-router-dom';
-import { useAuth } from '@/contexts/AuthContext';
+import { AuthGuard } from '@/components/auth/AuthGuard';
 import { Login } from '@/components/auth/Login';
 import { Register } from '@/components/auth/Register';
-import { AuthGuard } from '@/components/auth/AuthGuard';
-import { DashboardPage } from '@/pages/dashboard/DashboardPage';
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
+import { DashboardPage } from '@/pages/dashboard/DashboardPage';
 import { ProfilePage } from '@/pages/profile/ProfilePage';
-import { LoadingScreen } from '@/components/ui/loading-screen';
-
-interface ProtectedRouteProps {
-  children: React.ReactNode;
-}
-
-const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
-  const { user, isLoading } = useAuth();
-
-  if (isLoading) {
-    return <LoadingScreen size='lg' />;
-  }
-
-  if (!user) {
-    return <Navigate to='/login' replace />;
-  }
-
-  return <>{children}</>;
-};
+import { CreateProject } from '@/components/projects/client/CreateProject';
+import { ProjectList } from '@/components/projects/freelancer/ProjectList';
+import { ProjectDetails } from '@/components/projects/shared/ProjectDetails';
+import { ManageProjects } from '@/components/projects/client/ManageProjects';
+import { ProjectApplication } from '@/components/projects/freelancer/ProjectApplication';
+import { MyApplications } from '@/components/projects/freelancer/MyApplications';
 
 export function AppRoutes() {
   return (
     <Routes>
+      {/* Auth Routes */}
       <Route
         path='/login'
         element={
@@ -45,26 +32,100 @@ export function AppRoutes() {
           </AuthGuard>
         }
       />
+
+      {/* Protected Dashboard Routes */}
       <Route
         path='/dashboard'
         element={
-          <ProtectedRoute>
+          <AuthGuard requireAuth>
             <DashboardLayout>
               <DashboardPage />
             </DashboardLayout>
-          </ProtectedRoute>
+          </AuthGuard>
         }
       />
+
       <Route
         path='/profile'
         element={
-          <ProtectedRoute>
+          <AuthGuard requireAuth>
             <DashboardLayout>
               <ProfilePage />
             </DashboardLayout>
-          </ProtectedRoute>
+          </AuthGuard>
         }
       />
+
+      {/* Project Routes */}
+      <Route path='/projects'>
+        <Route
+          index
+          element={
+            <AuthGuard requireAuth allowedRoles={['freelancer']}>
+              <DashboardLayout>
+                <ProjectList />
+              </DashboardLayout>
+            </AuthGuard>
+          }
+        />
+
+        <Route
+          path='create'
+          element={
+            <AuthGuard requireAuth allowedRoles={['client']}>
+              <DashboardLayout>
+                <CreateProject />
+              </DashboardLayout>
+            </AuthGuard>
+          }
+        />
+
+        <Route
+          path=':id'
+          element={
+            <AuthGuard requireAuth>
+              <DashboardLayout>
+                <ProjectDetails />
+              </DashboardLayout>
+            </AuthGuard>
+          }
+        />
+
+        <Route
+          path='manage'
+          element={
+            <AuthGuard requireAuth allowedRoles={['client']}>
+              <DashboardLayout>
+                <ManageProjects />
+              </DashboardLayout>
+            </AuthGuard>
+          }
+        />
+
+        <Route
+          path='applications'
+          element={
+            <AuthGuard requireAuth allowedRoles={['freelancer']}>
+              <DashboardLayout>
+                <MyApplications />
+              </DashboardLayout>
+            </AuthGuard>
+          }
+        />
+
+        <Route
+          path=':id/apply'
+          element={
+            <AuthGuard requireAuth allowedRoles={['freelancer']}>
+              <DashboardLayout>
+                <ProjectApplication />
+              </DashboardLayout>
+            </AuthGuard>
+          }
+        />
+      </Route>
+
+      {/* Default Route */}
       <Route path='/' element={<Navigate to='/dashboard' replace />} />
     </Routes>
   );

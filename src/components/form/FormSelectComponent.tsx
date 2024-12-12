@@ -9,16 +9,27 @@ interface FormSelectComponentProps<T extends Record<string, any>> {
   label: string;
   options: { value: string; label: string }[];
   placeholder?: string;
+  required?: boolean;
 }
 
-export function FormSelectComponent<T extends Record<string, any>>({ form, name, label, options, ...rest }: FormSelectComponentProps<T>) {
+export function FormSelectComponent<T extends Record<string, any>>({
+  form,
+  name,
+  label,
+  options,
+  required = false,
+  ...rest
+}: FormSelectComponentProps<T>) {
   return (
     <FormField
       control={form.control}
       name={name}
       render={({ field }) => (
         <FormItem>
-          <FormLabel>{label}</FormLabel>
+          <FormLabel className='text-foreground'>
+            {label}
+            {required && <span className='text-destructive ml-1'>*</span>}
+          </FormLabel>
           <Select onValueChange={field.onChange} defaultValue={field.value}>
             <FormControl>
               <SelectTrigger>

@@ -32,6 +32,13 @@ import {
   Plus,
   Layers,
   Linkedin,
+  Inbox,
+  AlertCircle,
+  Search,
+  RotateCcw,
+  Calendar,
+  Filter,
+  ChevronDown,
 } from 'lucide-react';
 
 // @ts-expect-error - This type is used in other files
@@ -69,4 +76,11 @@ export const Icons = {
   plus: Plus,
   layers: Layers,
   linkedin: Linkedin,
+  inbox: Inbox,
+  alertCircle: AlertCircle,
+  search: Search,
+  reset: RotateCcw,
+  calendar: Calendar,
+  filter: Filter,
+  chevronDown: ChevronDown,
 } as const;

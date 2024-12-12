@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { FormField, FormItem, FormLabel, FormControl, FormMessage } from '@/components/ui/form';
+import { FormField, FormItem, FormLabel, FormControl, FormMessage, FormDescription } from '@/components/ui/form';
 import { Textarea } from '@/components/ui/textarea';
 import { UseFormReturn, Path } from 'react-hook-form';
 
@@ -9,6 +9,7 @@ interface FormTextareaComponentProps<T extends Record<string, any>> {
   label: string;
   placeholder: string;
   required?: boolean;
+  description?: string;
 }
 
 export function FormTextareaComponent<T extends Record<string, any>>({
@@ -17,6 +18,7 @@ export function FormTextareaComponent<T extends Record<string, any>>({
   label,
   placeholder,
   required = false,
+  description,
 }: FormTextareaComponentProps<T>) {
   return (
     <FormField
@@ -40,6 +42,7 @@ export function FormTextareaComponent<T extends Record<string, any>>({
               required={required}
             />
           </FormControl>
+          {description && <FormDescription>{description}</FormDescription>}
           <FormMessage />
         </FormItem>
       )}
