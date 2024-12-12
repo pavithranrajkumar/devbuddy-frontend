@@ -1,3 +1,8 @@
+export interface Skill {
+  id: number;
+  name: string;
+}
+
 export interface Project {
   id: number;
   title: string;
@@ -5,9 +10,8 @@ export interface Project {
   budgetMin: number;
   budgetMax: number;
   deadline: string;
-  status: 'draft' | 'published' | 'in_progress' | 'completed' | 'cancelled';
-  skills: number[];
-  clientId: number;
+  status: 'draft' | 'published' | 'in_progress' | 'completed';
+  skills: Skill[];
   applicantsCount: number;
   createdAt: string;
   updatedAt: string;

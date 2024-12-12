@@ -6,11 +6,10 @@ import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import { DashboardPage } from '@/pages/dashboard/DashboardPage';
 import { ProfilePage } from '@/pages/profile/ProfilePage';
 import { CreateProject } from '@/components/projects/client/CreateProject';
-import { ProjectList } from '@/components/projects/freelancer/ProjectList';
 import { ProjectDetails } from '@/components/projects/shared/ProjectDetails';
-import { ManageProjects } from '@/components/projects/client/ManageProjects';
 import { ProjectApplication } from '@/components/projects/freelancer/ProjectApplication';
 import { MyApplications } from '@/components/projects/freelancer/MyApplications';
+import { ProjectListView } from '@/components/projects/shared/ProjectListView';
 
 export function AppRoutes() {
   return (
@@ -63,7 +62,7 @@ export function AppRoutes() {
           element={
             <AuthGuard requireAuth allowedRoles={['freelancer']}>
               <DashboardLayout>
-                <ProjectList />
+                <ProjectListView />
               </DashboardLayout>
             </AuthGuard>
           }
@@ -96,7 +95,7 @@ export function AppRoutes() {
           element={
             <AuthGuard requireAuth allowedRoles={['client']}>
               <DashboardLayout>
-                <ManageProjects />
+                <ProjectListView showCreateButton />
               </DashboardLayout>
             </AuthGuard>
           }
