@@ -26,8 +26,8 @@ export const applicationApi = {
     }
   },
 
-  getApplications: async ({ projectId }: { projectId: number }): Promise<ProjectApplication[]> => {
-    const response = await api.get('/applications', { params: { projectId } });
+  getApplications: async (params?: { projectId?: number }): Promise<ProjectApplication[]> => {
+    const response = await api.get('/applications', { params });
     return response.data;
   },
 

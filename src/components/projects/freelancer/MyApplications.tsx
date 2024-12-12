@@ -1,10 +1,10 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { projectApi } from '@/services/api/project';
 import { ProjectApplication } from '@/types/project';
 import { useToast } from '@/hooks/use-toast';
 import { Icons } from '@/components/ui/icons';
 import { formatCurrency, formatDate } from '@/lib/utils';
+import { applicationApi } from '@/services/api/application';
 
 export function MyApplications() {
   const navigate = useNavigate();
@@ -19,7 +19,7 @@ export function MyApplications() {
   const loadApplications = async () => {
     try {
       setIsLoading(true);
-      const data = await projectApi.getFreelancerApplications();
+      const data = await applicationApi.getApplications();
       setApplications(data);
     } catch (error) {
       console.error('Error loading applications:', error);
@@ -61,7 +61,7 @@ export function MyApplications() {
             >
               <div className='flex justify-between items-start'>
                 <div className='space-y-1'>
-                  <h3 className='font-semibold'>{application.project.title}</h3>
+                  <h3 className='font-semibold'>{application.Project.title}</h3>
                   <p className='text-sm text-muted-foreground'>Applied: {formatDate(application.createdAt)}</p>
                   <p className='text-sm'>Proposed Rate: {formatCurrency(application.proposedRate)}/hr</p>
                 </div>

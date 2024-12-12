@@ -20,7 +20,7 @@ export interface Project {
 export interface ProjectApplication {
   id: number;
   projectId: number;
-  project: Project;
+  Project: Project;
   freelancerId: number;
   coverLetter: string;
   proposedRate: number;

@@ -55,6 +55,17 @@ export function AppRoutes() {
         }
       />
 
+      <Route
+        path='applications'
+        element={
+          <AuthGuard requireAuth allowedRoles={['freelancer']}>
+            <DashboardLayout>
+              <MyApplications />
+            </DashboardLayout>
+          </AuthGuard>
+        }
+      />
+
       {/* Project Routes */}
       <Route path='/projects'>
         <Route
@@ -96,17 +107,6 @@ export function AppRoutes() {
             <AuthGuard requireAuth allowedRoles={['client']}>
               <DashboardLayout>
                 <ProjectListView showCreateButton />
-              </DashboardLayout>
-            </AuthGuard>
-          }
-        />
-
-        <Route
-          path='applications'
-          element={
-            <AuthGuard requireAuth allowedRoles={['freelancer']}>
-              <DashboardLayout>
-                <MyApplications />
               </DashboardLayout>
             </AuthGuard>
           }

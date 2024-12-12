@@ -14,6 +14,7 @@ import { Skill } from '@/contexts/auth/types';
 import { FormMultiSelectComponent } from '@/components/form/FormMultiSelectComponent';
 import { skillApi } from '@/services/api/skill';
 import moment from 'moment';
+import { FormDatePickerComponent } from '@/components/form/FormDatePickerComponent';
 
 const createProjectSchema = z
   .object({
@@ -162,13 +163,12 @@ export function CreateProject() {
               />
             </div>
 
-            <FormFieldComponent
+            <FormDatePickerComponent
               form={form}
               name='deadline'
-              placeholder=''
               label='Project Deadline'
-              type='date'
               description='When do you need this completed?'
+              placeholder='Select deadline date'
             />
 
             <FormMultiSelectComponent

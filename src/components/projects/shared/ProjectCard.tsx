@@ -64,12 +64,10 @@ export function ProjectCard({ project, onView, onEdit, onApply }: ProjectCardPro
             <Icons.calendar className='h-4 w-4' />
             <span>Due {formatDate(project.deadline)}</span>
           </div>
-          {isClient && (
-            <div className='flex items-center gap-1'>
-              <Icons.users className='h-4 w-4' />
-              <span>{project.applicantsCount} applicants</span>
-            </div>
-          )}
+          <div className='flex items-center gap-1'>
+            <Icons.users className='h-4 w-4' />
+            <span>{project.applicantsCount} applicants</span>
+          </div>
         </div>
       </CardContent>
 

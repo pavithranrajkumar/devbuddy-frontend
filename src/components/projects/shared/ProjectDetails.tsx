@@ -8,6 +8,7 @@ import { Icons } from '@/components/ui/icons';
 import { useAuth } from '@/contexts/AuthContext';
 import { ApplicationList } from '../client/ApplicationList';
 import { formatCurrency, formatDate } from '@/lib/utils';
+import { applicationApi } from '@/services/api/application';
 
 export function ProjectDetails() {
   const { id } = useParams<{ id: string }>();
@@ -32,7 +33,7 @@ export function ProjectDetails() {
       setIsLoading(true);
       const [projectData, applicationData] = await Promise.all([
         projectApi.getProject(projectId),
-        isFreelancer ? projectApi.getFreelancerApplication(projectId) : null,
+        isFreelancer ? applicationApi.getApplication(projectId) : null,
       ]);
       setProject(projectData);
       setApplication(applicationData);

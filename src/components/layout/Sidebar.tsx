@@ -42,7 +42,7 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
     },
     {
       title: 'My Applications',
-      href: '/projects/applications',
+      href: '/applications',
       icon: Icons.fileText,
     },
     {
