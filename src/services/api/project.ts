@@ -8,7 +8,7 @@ interface CreateProjectInput {
   budgetMin: number;
   budgetMax: number;
   deadline: string;
-  requiredSkills: number[];
+  skills: number[];
 }
 
 interface PaginatedResponse<T> {
@@ -20,7 +20,7 @@ interface PaginatedResponse<T> {
 
 export const projectApi = {
   // Get all projects with filters
-  getProjects: async ({ page = 1, limit = 9, search = '', ...filters }) => {
+  getProjects: async ({ page = 1, limit = 9, search = '', ...filters }): Promise<PaginatedResponse<Project>> => {
     const response = await api.get<PaginatedResponse<Project>>('/projects', {
       params: {
         page,
@@ -64,7 +64,7 @@ export const projectApi = {
       estimatedDuration: number;
     }
   ): Promise<void> => {
-    await api.post(`/projects/${projectId}/apply`, data);
+    await api.post(`/applications/projects/${projectId}/apply`, data);
   },
 
   // Get project applications

@@ -6,7 +6,7 @@ export interface Project {
   budgetMax: number;
   deadline: string;
   status: 'draft' | 'published' | 'in_progress' | 'completed' | 'cancelled';
-  requiredSkills: number[];
+  skills: number[];
   clientId: number;
   applicantsCount: number;
   createdAt: string;

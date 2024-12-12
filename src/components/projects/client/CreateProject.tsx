@@ -34,7 +34,7 @@ const createProjectSchema = z
       },
       { message: 'Deadline must be in the future' }
     ),
-    requiredSkills: z.array(z.number()).min(1, 'At least one skill is required'),
+    skills: z.array(z.number()).min(1, 'At least one skill is required'),
   })
   .refine(
     (data) => {
@@ -80,7 +80,7 @@ export function CreateProject() {
       budgetMin: 0,
       budgetMax: 0,
       deadline: '',
-      requiredSkills: [],
+      skills: [],
     },
   });
 
@@ -173,7 +173,7 @@ export function CreateProject() {
 
             <FormMultiSelectComponent
               form={form}
-              name='requiredSkills'
+              name='skills'
               label='Required Skills'
               placeholder='Select required skills'
               options={skillsOptions}

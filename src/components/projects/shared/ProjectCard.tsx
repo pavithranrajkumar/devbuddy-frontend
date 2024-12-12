@@ -13,7 +13,7 @@ interface ProjectCardProps {
     budgetMax: number;
     deadline: string;
     status: string;
-    requiredSkills: number[];
+    skills: number[];
     applicantsCount: number;
   };
   onView: (id: number) => void;
@@ -45,7 +45,7 @@ export function ProjectCard({ project, onView, onEdit, onApply }: ProjectCardPro
         </div>
 
         <div className='flex flex-wrap gap-1'>
-          {project.requiredSkills.map((skill) => (
+          {project.skills.map((skill) => (
             <Badge key={skill} variant='secondary' className='text-xs'>
               {skill}
             </Badge>
