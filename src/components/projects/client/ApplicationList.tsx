@@ -2,9 +2,9 @@ import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Icons } from '@/components/ui/icons';
 import { useToast } from '@/hooks/use-toast';
-import { projectApi } from '@/services/api/project';
 import { ProjectApplication } from '@/types/project';
 import { formatDate } from '@/lib/utils';
+import { applicationApi } from '@/services/api/application';
 
 interface ApplicationListProps {
   projectId: number;
@@ -22,7 +22,7 @@ export function ApplicationList({ projectId }: ApplicationListProps) {
   const loadApplications = async () => {
     try {
       setIsLoading(true);
-      const data = await projectApi.getProjectApplications(projectId);
+      const data = await applicationApi.getApplications({ projectId });
       console.log({ data });
       setApplications(data);
     } catch (error) {
@@ -39,7 +39,7 @@ export function ApplicationList({ projectId }: ApplicationListProps) {
 
   const handleStatusUpdate = async (applicationId: number, status: 'accepted' | 'rejected' | 'marked_for_interview') => {
     try {
-      await projectApi.updateApplicationStatus(projectId, applicationId, status);
+      await applicationApi.updateApplicationStatus(projectId, applicationId, status);
       await loadApplications();
       toast({
         title: 'Success',

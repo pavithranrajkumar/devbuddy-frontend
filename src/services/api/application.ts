@@ -3,7 +3,6 @@ import { ProjectApplication } from '@/types/project';
 import axios from 'axios';
 
 export const applicationApi = {
-  // Apply to a project
   applyToProject: async (
     projectId: number,
     data: {
@@ -15,25 +14,9 @@ export const applicationApi = {
     await api.post(`/applications/projects/${projectId}/apply`, data);
   },
 
-  // Get project applications
-  getProjectApplications: async (projectId: number): Promise<ProjectApplication[]> => {
-    const response = await api.get(`/applications/projects/${projectId}`);
-    return response.data;
-  },
-
-  // Update application status
-  updateApplicationStatus: async (
-    projectId: number,
-    applicationId: number,
-    status: 'accepted' | 'rejected' | 'marked_for_interview'
-  ): Promise<void> => {
-    await api.put(`/projects/${projectId}/applications/${applicationId}`, { status });
-  },
-
-  // Get freelancer's application for a specific project
-  getFreelancerApplication: async (projectId: number): Promise<ProjectApplication | null> => {
+  getApplication: async (projectId: number): Promise<ProjectApplication | null> => {
     try {
-      const response = await api.get(`/projects/${projectId}/my-application`);
+      const response = await api.get(`/projects/${projectId}`);
       return response.data;
     } catch (error) {
       if (axios.isAxiosError(error) && error.response?.status === 404) {
@@ -43,13 +26,19 @@ export const applicationApi = {
     }
   },
 
-  // Get all applications for a freelancer
-  getFreelancerApplications: async (): Promise<ProjectApplication[]> => {
-    const response = await api.get('/applications/freelancer');
+  getApplications: async ({ projectId }: { projectId: number }): Promise<ProjectApplication[]> => {
+    const response = await api.get('/applications', { params: { projectId } });
     return response.data;
   },
 
-  // Withdraw an application
+  updateApplicationStatus: async (
+    projectId: number,
+    applicationId: number,
+    status: 'accepted' | 'rejected' | 'marked_for_interview'
+  ): Promise<void> => {
+    await api.put(`/projects/${projectId}/applications/${applicationId}`, { status });
+  },
+
   withdrawApplication: async (projectId: number, applicationId: number): Promise<void> => {
     await api.put(`/projects/${projectId}/applications/${applicationId}/withdraw`);
   },
