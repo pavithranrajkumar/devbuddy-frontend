@@ -9,6 +9,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { ApplicationList } from '../client/ApplicationList';
 import { formatCurrency, formatDate } from '@/lib/utils';
 import { applicationApi } from '@/services/api/application';
+import { Badge } from '@/components/ui/badge';
 
 export function ProjectDetails() {
   const { id } = useParams<{ id: string }>();
@@ -49,6 +50,20 @@ export function ProjectDetails() {
     }
   };
 
+  const getStatusVariant = (status: string): 'default' | 'secondary' | 'destructive' => {
+    switch (status) {
+      case 'published':
+        return 'default';
+      case 'in_progress':
+      case 'completed':
+        return 'secondary';
+      case 'cancelled':
+        return 'destructive';
+      default:
+        return 'default';
+    }
+  };
+
   if (isLoading) {
     return (
       <div className='flex items-center justify-center h-64'>
@@ -68,45 +83,136 @@ export function ProjectDetails() {
   }
 
   return (
-    <div className='max-w-4xl mx-auto space-y-8'>
-      <div className='space-y-6'>
-        <h1 className='text-3xl font-bold'>{project.title}</h1>
-
-        <div className='flex justify-between items-center'>
-          <div className='space-y-1'>
-            <p className='text-lg font-medium'>
-              Budget: {formatCurrency(project.budgetMin)} - {formatCurrency(project.budgetMax)}
-            </p>
-            <p className='text-sm text-muted-foreground'>Deadline: {formatDate(project.deadline)}</p>
-          </div>
-
-          {isFreelancer && !application && <Button onClick={() => navigate(`/projects/${project.id}/apply`)}>Apply Now</Button>}
+    <div className='container mx-auto py-6'>
+      <div className='flex gap-8'>
+        <div className='shrink-0'>
+          <Button
+            variant='outline'
+            size='sm'
+            className='flex items-center gap-2 text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-colors sticky top-6'
+            onClick={() => navigate(-1)}
+          >
+            <Icons.arrowLeft className='h-4 w-4' />
+          </Button>
         </div>
 
-        <div className='prose max-w-none'>
-          <h2 className='text-xl font-semibold'>Project Description</h2>
-          <p className='whitespace-pre-wrap'>{project.description}</p>
-        </div>
+        <div className='flex-1 space-y-8'>
+          <div className='bg-card rounded-lg p-8 shadow-sm border'>
+            <div className='space-y-6'>
+              <div className='flex items-start justify-between'>
+                <div className='space-y-2'>
+                  <h1 className='text-4xl font-bold tracking-tight'>{project.title}</h1>
+                  <div className='flex items-center gap-4 text-muted-foreground'>
+                    <div className='flex items-center gap-2'>
+                      <Icons.calendar className='h-4 w-4' />
+                      <span>Posted {formatDate(project.createdAt)}</span>
+                    </div>
+                    <div className='flex items-center gap-2'>
+                      <Icons.user className='h-4 w-4' />
+                      <span>By {project.title}</span>
+                    </div>
+                  </div>
+                </div>
+                <Badge variant={getStatusVariant(project.status)} className='text-sm px-3 py-1'>
+                  {project.status.replace('_', ' ')}
+                </Badge>
+              </div>
 
-        {isFreelancer && application && (
-          <div className='border rounded-lg p-4 bg-muted/50'>
-            <h2 className='text-xl font-semibold mb-4'>Your Application</h2>
-            <div className='space-y-2'>
-              <p>
-                Status: <span className='font-medium capitalize'>{application.status}</span>
-              </p>
-              <p>Proposed Rate: {formatCurrency(application.proposedRate)}/hr</p>
-              <p>Estimated Duration: {application.estimatedDuration} days</p>
+              <div className='grid grid-cols-2 gap-6 mt-6'>
+                <div className='bg-muted/50 rounded-lg p-6 space-y-3 border hover:border-primary/50 transition-colors'>
+                  <div className='flex items-center gap-2'>
+                    <Icons.dollarSign className='h-5 w-5 text-muted-foreground' />
+                    <h3 className='text-sm font-medium text-muted-foreground'>Budget Range</h3>
+                  </div>
+                  <div className='space-y-1'>
+                    <p className='text-2xl font-bold text-primary'>
+                      {formatCurrency(project.budgetMin)}
+                      <span className='text-muted-foreground mx-2'>-</span>
+                      {formatCurrency(project.budgetMax)}
+                    </p>
+                    <p className='text-sm text-muted-foreground'>Fixed price project</p>
+                  </div>
+                </div>
+
+                <div className='bg-muted/50 rounded-lg p-6 space-y-3 border hover:border-primary/50 transition-colors'>
+                  <div className='flex items-center gap-2'>
+                    <Icons.calendar className='h-5 w-5 text-muted-foreground' />
+                    <h3 className='text-sm font-medium text-muted-foreground'>Project Timeline</h3>
+                  </div>
+                  <div className='space-y-1'>
+                    <p className='text-2xl font-bold text-primary'>{formatDate(project.deadline)}</p>
+                    <p className='text-sm text-muted-foreground'>
+                      {new Date(project.deadline) > new Date()
+                        ? `${Math.ceil((new Date(project.deadline).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24))} days remaining`
+                        : 'Deadline passed'}
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              {project.skills && project.skills.length > 0 && (
+                <div className='border-t pt-6'>
+                  <h2 className='text-lg font-semibold mb-3'>Required Skills</h2>
+                  <div className='flex flex-wrap gap-2'>
+                    {project.skills.map((skill) => (
+                      <Badge key={skill.id} variant='secondary' className='px-3 py-1'>
+                        {skill.name}
+                      </Badge>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
           </div>
-        )}
 
-        {isClient && (
-          <div className='border rounded-lg p-6 bg-card'>
-            <h2 className='text-xl font-semibold mb-4'>Applications</h2>
-            <ApplicationList projectId={project.id} />
+          <div className='bg-card rounded-lg p-8 shadow-sm border'>
+            <h2 className='text-xl font-semibold mb-4'>Project Description</h2>
+            <div className='prose prose-gray max-w-none'>
+              <p className='whitespace-pre-wrap leading-relaxed'>{project.description}</p>
+            </div>
           </div>
-        )}
+
+          {isFreelancer && (
+            <div className='bg-card rounded-lg p-8 shadow-sm border'>
+              {application ? (
+                <div className='space-y-4'>
+                  <h2 className='text-xl font-semibold'>Your Application</h2>
+                  <div className='grid grid-cols-3 gap-6'>
+                    <div className='space-y-2'>
+                      <h3 className='text-sm font-medium text-muted-foreground'>Status</h3>
+                      <Badge variant='outline' className='text-base'>
+                        {application.status.replace('_', ' ')}
+                      </Badge>
+                    </div>
+                    <div className='space-y-2'>
+                      <h3 className='text-sm font-medium text-muted-foreground'>Proposed Rate</h3>
+                      <p className='text-lg font-semibold'>{formatCurrency(application.proposedRate)}/hr</p>
+                    </div>
+                    <div className='space-y-2'>
+                      <h3 className='text-sm font-medium text-muted-foreground'>Duration</h3>
+                      <p className='text-lg font-semibold'>{application.estimatedDuration} days</p>
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                <div className='text-center py-8'>
+                  <h2 className='text-xl font-semibold mb-2'>Interested in this project?</h2>
+                  <p className='text-muted-foreground mb-6'>Submit your proposal and start working!</p>
+                  <Button onClick={() => navigate(`/projects/${project.id}/apply`)} className='px-8'>
+                    Apply Now
+                  </Button>
+                </div>
+              )}
+            </div>
+          )}
+
+          {isClient && (
+            <div className='bg-card rounded-lg p-8 shadow-sm border'>
+              <h2 className='text-xl font-semibold mb-6'>Applications</h2>
+              <ApplicationList projectId={project.id} />
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );

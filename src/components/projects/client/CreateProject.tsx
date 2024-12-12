@@ -23,11 +23,15 @@ const createProjectSchema = z
     budgetMin: z
       .number()
       .min(0, 'Minimum budget must be greater than 0')
-      .refine((val) => val !== undefined, { message: 'Minimum budget is required' }),
+      .refine((val) => val !== undefined, {
+        message: 'Minimum budget is required',
+      }),
     budgetMax: z
       .number()
       .min(0, 'Maximum budget must be greater than 0')
-      .refine((val) => val !== undefined, { message: 'Maximum budget is required' }),
+      .refine((val) => val !== undefined, {
+        message: 'Maximum budget is required',
+      }),
     deadline: z.string().refine(
       (val) => {
         const date = new Date(val);
@@ -181,7 +185,7 @@ export function CreateProject() {
             />
 
             <div className='flex items-center justify-end gap-4 pt-4'>
-              <Button type='button' variant='outline' onClick={() => navigate('/projects')}>
+              <Button type='button' variant='outline' onClick={() => navigate('/projects/manage')}>
                 Cancel
               </Button>
               <Button type='submit' disabled={isSubmitting} className='gap-2'>

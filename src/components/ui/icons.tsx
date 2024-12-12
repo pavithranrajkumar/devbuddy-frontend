@@ -39,7 +39,8 @@ import {
   Calendar,
   Filter,
   ChevronDown,
-} from 'lucide-react';
+  ArrowLeft,
+} from "lucide-react";
 
 // @ts-expect-error - This type is used in other files
 export type Icon = LucideIcon;
@@ -83,4 +84,5 @@ export const Icons = {
   calendar: Calendar,
   filter: Filter,
   chevronDown: ChevronDown,
+  arrowLeft: ArrowLeft,
 } as const;

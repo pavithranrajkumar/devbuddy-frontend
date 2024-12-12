@@ -10,8 +10,14 @@ export interface Project {
   budgetMin: number;
   budgetMax: number;
   deadline: string;
-  status: 'draft' | 'published' | 'in_progress' | 'completed';
   skills: Skill[];
+  status: 'published' | 'in_progress' | 'completed' | 'cancelled';
+  clientId: number;
+  client?: {
+    id: number;
+    name: string;
+    rating: number;
+  };
   applicantsCount: number;
   createdAt: string;
   updatedAt: string;
@@ -31,8 +37,10 @@ export interface ProjectApplication {
 }
 
 export interface ProjectFiltersInterface {
-  status?: string[];
+  status?: string;
   budgetMin?: number;
   budgetMax?: number;
   skills?: number[];
+  search?: string;
+  hasDeadlineBefore?: string;
 }
