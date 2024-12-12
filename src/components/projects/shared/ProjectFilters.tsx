@@ -11,7 +11,6 @@ import {
   SelectContent,
   SelectItem,
 } from "@/components/ui/select";
-import { Calendar } from "@/components/ui/calendar";
 import {
   Popover,
   PopoverContent,
@@ -154,14 +153,14 @@ export function ProjectFilters({
                 Projects due before selected date
               </p>
             </div>
-            <Calendar
+            {/* <Calendar
               mode="single"
               selected={date}
               onSelect={setDate}
               initialFocus
               disabled={(date) => date < new Date()}
               className="rounded-t-none"
-            />
+            /> */}
           </PopoverContent>
         </Popover>
       </div>
