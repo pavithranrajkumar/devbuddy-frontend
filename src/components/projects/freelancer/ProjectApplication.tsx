@@ -8,8 +8,8 @@ import { Button } from '@/components/ui/button';
 import { Icons } from '@/components/ui/icons';
 import { useToast } from '@/hooks/use-toast';
 import { FormTextareaComponent } from '@/components/form/FormTextareaComponent';
-import { projectApi } from '@/services/api/project';
 import { FormFieldComponent } from '@/components/form/FormFieldComponent';
+import { applicationApi } from '@/services/api/application';
 
 const applicationSchema = z.object({
   coverLetter: z.string().min(50, 'Cover letter must be at least 50 characters'),
@@ -39,7 +39,7 @@ export function ProjectApplication() {
 
     try {
       setIsSubmitting(true);
-      await projectApi.applyToProject(Number(id), data);
+      await applicationApi.applyToProject(Number(id), data);
 
       toast({
         title: 'Success',

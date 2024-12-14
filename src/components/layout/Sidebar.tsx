@@ -2,6 +2,7 @@ import { NavLink } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 import { Icons } from '@/components/ui/icons';
 import { useAuth } from '@/contexts/AuthContext';
+import { useEffect, useRef } from 'react';
 
 interface SidebarProps {
   isOpen: boolean;
@@ -10,6 +11,35 @@ interface SidebarProps {
 
 export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
   const { user } = useAuth();
+  const sidebarRef = useRef<HTMLElement>(null);
+
+  useEffect(() => {
+    const handleMouseEnter = () => {
+      if (window.innerWidth >= 600) {
+        // lg breakpoint
+        setIsOpen(true);
+      }
+    };
+
+    const handleMouseLeave = () => {
+      if (window.innerWidth >= 600) {
+        setIsOpen(false);
+      }
+    };
+
+    const sidebar = sidebarRef.current;
+    if (sidebar) {
+      sidebar.addEventListener('mouseenter', handleMouseEnter);
+      sidebar.addEventListener('mouseleave', handleMouseLeave);
+    }
+
+    return () => {
+      if (sidebar) {
+        sidebar.removeEventListener('mouseenter', handleMouseEnter);
+        sidebar.removeEventListener('mouseleave', handleMouseLeave);
+      }
+    };
+  }, [setIsOpen]);
 
   const clientNavItems = [
     {
@@ -59,6 +89,7 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
       {isOpen && <div className='fixed inset-0 z-40 bg-black/80 lg:hidden' onClick={() => setIsOpen(false)} />}
 
       <aside
+        ref={sidebarRef}
         className={cn(
           'fixed inset-y-0 left-0 z-50 flex w-64 flex-col bg-white shadow-lg lg:z-auto',
           isOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0 lg:w-20',

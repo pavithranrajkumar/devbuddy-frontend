@@ -6,7 +6,7 @@ import { Header } from './Header';
 import { useAuth } from '@/contexts/AuthContext';
 
 export function DashboardLayout({ children }: { children: React.ReactNode }) {
-  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const { isLoading } = useAuth();
 
   if (isLoading) {

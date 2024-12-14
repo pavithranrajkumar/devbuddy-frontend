@@ -32,7 +32,7 @@ const createProjectSchema = z
       .refine((val) => val !== undefined, {
         message: 'Maximum budget is required',
       }),
-    deadline: z.string().refine(
+    deadline: z.date().refine(
       (val) => {
         const date = new Date(val);
         return date > new Date();
@@ -84,7 +84,7 @@ export function CreateProject() {
       description: '',
       budgetMin: 0,
       budgetMax: 0,
-      deadline: '',
+      deadline: new Date(),
       skills: [],
     },
   });

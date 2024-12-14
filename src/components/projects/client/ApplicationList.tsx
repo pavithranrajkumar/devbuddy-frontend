@@ -5,6 +5,8 @@ import { useToast } from '@/hooks/use-toast';
 import { ProjectApplication } from '@/types/project';
 import { formatDate } from '@/lib/utils';
 import { applicationApi } from '@/services/api/application';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
+import { Textarea } from '@/components/ui/textarea';
 
 interface ApplicationListProps {
   projectId: number;
@@ -14,6 +16,11 @@ export function ApplicationList({ projectId }: ApplicationListProps) {
   const { toast } = useToast();
   const [applications, setApplications] = useState<ProjectApplication[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [rejectionDialog, setRejectionDialog] = useState<{ isOpen: boolean; applicationId: number | null }>({
+    isOpen: false,
+    applicationId: null,
+  });
+  const [rejectionReason, setRejectionReason] = useState('');
 
   useEffect(() => {
     loadApplications();
@@ -39,7 +46,7 @@ export function ApplicationList({ projectId }: ApplicationListProps) {
 
   const handleStatusUpdate = async (applicationId: number, status: 'accepted' | 'rejected' | 'marked_for_interview') => {
     try {
-      await applicationApi.updateApplicationStatus(projectId, applicationId, status);
+      await applicationApi.updateApplicationStatus({ applicationId, status });
       await loadApplications();
       toast({
         title: 'Success',
@@ -50,6 +57,28 @@ export function ApplicationList({ projectId }: ApplicationListProps) {
       toast({
         title: 'Error',
         description: 'Failed to update application status',
+        variant: 'destructive',
+      });
+    }
+  };
+
+  const handleReject = async () => {
+    if (!rejectionDialog.applicationId) return;
+
+    try {
+      await applicationApi.updateApplicationStatus({ applicationId: rejectionDialog.applicationId, status: 'rejected', rejectionReason });
+      await loadApplications();
+      toast({
+        title: 'Success',
+        description: 'Application rejected successfully',
+      });
+      setRejectionDialog({ isOpen: false, applicationId: null });
+      setRejectionReason('');
+    } catch (error) {
+      console.error('Error rejecting application:', error);
+      toast({
+        title: 'Error',
+        description: 'Failed to reject application',
         variant: 'destructive',
       });
     }
@@ -89,21 +118,48 @@ export function ApplicationList({ projectId }: ApplicationListProps) {
                   <Button size='sm' onClick={() => handleStatusUpdate(application.id, 'marked_for_interview')}>
                     Mark for Interview
                   </Button>
-                  <Button size='sm' variant='outline' onClick={() => handleStatusUpdate(application.id, 'rejected')}>
+                  <Button size='sm' variant='outline' onClick={() => setRejectionDialog({ isOpen: true, applicationId: application.id })}>
                     Reject
                   </Button>
                 </>
               )}
               {application.status === 'marked_for_interview' && (
-                <Button size='sm' onClick={() => handleStatusUpdate(application.id, 'accepted')}>
-                  Accept
-                </Button>
+                <>
+                  <Button size='sm' onClick={() => handleStatusUpdate(application.id, 'accepted')}>
+                    Accept
+                  </Button>
+
+                  <Button size='sm' variant='outline' onClick={() => setRejectionDialog({ isOpen: true, applicationId: application.id })}>
+                    Reject
+                  </Button>
+                </>
               )}
             </div>
           </div>
           <p className='text-sm whitespace-pre-wrap'>{application.coverLetter}</p>
         </div>
       ))}
+      <Dialog open={rejectionDialog.isOpen} onOpenChange={(open) => !open && setRejectionDialog({ isOpen: false, applicationId: null })}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Reject Application</DialogTitle>
+          </DialogHeader>
+          <Textarea
+            placeholder='Provide a reason for rejection (optional)'
+            value={rejectionReason}
+            onChange={(e) => setRejectionReason(e.target.value)}
+            className='min-h-[100px]'
+          />
+          <DialogFooter>
+            <Button variant='outline' onClick={() => setRejectionDialog({ isOpen: false, applicationId: null })}>
+              Cancel
+            </Button>
+            <Button variant='destructive' onClick={handleReject}>
+              Reject Application
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

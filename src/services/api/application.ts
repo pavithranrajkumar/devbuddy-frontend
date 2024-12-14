@@ -31,12 +31,16 @@ export const applicationApi = {
     return response.data;
   },
 
-  updateApplicationStatus: async (
-    projectId: number,
-    applicationId: number,
-    status: 'accepted' | 'rejected' | 'marked_for_interview'
-  ): Promise<void> => {
-    await api.put(`/projects/${projectId}/applications/${applicationId}`, { status });
+  updateApplicationStatus: async ({
+    applicationId,
+    status,
+    rejectionReason,
+  }: {
+    applicationId: number;
+    status: 'accepted' | 'rejected' | 'marked_for_interview';
+    rejectionReason?: string;
+  }): Promise<void> => {
+    await api.put(`/applications/${applicationId}/status`, { status, rejectionReason });
   },
 
   withdrawApplication: async (projectId: number, applicationId: number): Promise<void> => {
