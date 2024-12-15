@@ -2,8 +2,8 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Icons } from '@/components/ui/icons';
-import { cn } from '@/lib/utils';
 import moment from 'moment';
+import { useNavigate } from 'react-router-dom';
 
 interface ProjectsGridProps {
   projects: Array<{
@@ -19,26 +19,21 @@ interface ProjectsGridProps {
 }
 
 export function ProjectsGrid({ projects }: ProjectsGridProps) {
+  const navigate = useNavigate();
+
   return (
     <div className='space-y-4'>
       <div className='flex items-center justify-between'>
         <h2 className='text-lg font-semibold tracking-tight'>Matching Projects</h2>
-        <Button variant='secondary' size='sm'>
+        <Button variant='secondary' size='sm' onClick={() => navigate('/projects')}>
           View All
           <Icons.arrowRight className='ml-2 h-4 w-4' />
         </Button>
       </div>
 
-      <div className='grid gap-4 md:grid-cols-2 lg:grid-cols-3'>
+      <div className='grid gap-4 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3'>
         {projects.map((project, index) => (
           <Card key={index} className='group relative overflow-hidden transition-all hover:shadow-md'>
-            {/* Match Score Badge */}
-            <div className='absolute right-4 top-4'>
-              <Badge className={cn('bg-emerald-500/10 text-emerald-500', project.matchScore >= 90 && 'bg-emerald-500/20')}>
-                {project.matchScore}% Match
-              </Badge>
-            </div>
-
             <CardContent className='p-6'>
               <div className='space-y-4'>
                 {/* Project Title */}

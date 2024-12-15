@@ -4,6 +4,10 @@ export interface Skill {
 }
 
 export interface Project {
+  userType: string;
+  proposedRate: string;
+  budget: number;
+  name: any;
   id: number;
   title: string;
   description: string;
@@ -11,7 +15,7 @@ export interface Project {
   budgetMax: number;
   deadline: string;
   skills: Skill[];
-  status: 'published' | 'in_progress' | 'completed' | 'cancelled';
+  status: "published" | "in_progress" | "completed" | "cancelled";
   clientId: number;
   client?: {
     id: number;
@@ -31,16 +35,24 @@ export interface ProjectApplication {
   coverLetter: string;
   proposedRate: number;
   estimatedDuration: number;
-  status: 'applied' | 'marked_for_interview' | 'accepted' | 'rejected' | 'withdrawn';
+  status:
+    | "applied"
+    | "marked_for_interview"
+    | "accepted"
+    | "rejected"
+    | "withdrawn";
   createdAt: string;
   updatedAt: string;
 }
 
 export interface ProjectFiltersInterface {
-  status?: string;
+  status?: string; // Make sure this is optional if not always provided
+  budget?: string;
   budgetMin?: number;
   budgetMax?: number;
   skills?: number[];
   search?: string;
   hasDeadlineBefore?: string;
+  startDate?: string;
+  endDate?: string;
 }

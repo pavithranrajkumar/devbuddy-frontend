@@ -1,9 +1,13 @@
-import { useAuth } from '@/contexts/AuthContext';
-import { ClientDashboard } from './ClientDashboard';
-import { FreelancerDashboard } from './FreelancerDashboard';
+import { useAuth } from "@/contexts/AuthContext";
+import { FreelancerDashboard } from "./FreelancerDashboard";
+import { ProjectListView } from "@/components/projects/shared/ProjectListView";
 
 export function DashboardPage() {
   const { user } = useAuth();
 
-  return user?.userType === 'client' ? <ClientDashboard user={user} /> : <FreelancerDashboard />;
+  return user?.userType === "client" ? (
+    <ProjectListView />
+  ) : (
+    <FreelancerDashboard />
+  );
 }

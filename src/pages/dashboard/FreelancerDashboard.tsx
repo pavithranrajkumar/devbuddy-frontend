@@ -29,11 +29,11 @@ export function FreelancerDashboard() {
       {/* Hero Section with Profile Overview */}
       <ProfileHero data={data.profileOverview} />
 
-      {/* Stats Grid */}
-      <div className='grid gap-4 md:grid-cols-2 lg:grid-cols-3'>
-        <StatsOverview className='md:col-span-2 lg:col-span-1' stats={data.applicationStats} />
-        <SkillsCard className='md:col-span-2 lg:col-span-1' skills={data.skills} />
-        <ApplicationTimeline className='md:col-span-2 lg:col-span-1' applications={data.recentApplications} />
+      {/* Stats Grid - Updated Layout */}
+      <div className='grid gap-4 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3'>
+        <StatsOverview className='col-span-full lg:col-span-1' stats={data.applicationStats} />
+        <SkillsCard className='col-span-full md:col-span-1' skills={data.skills} />
+        <ApplicationTimeline className='col-span-full md:col-span-1' applications={data.recentApplications} />
       </div>
 
       {/* Projects Section */}

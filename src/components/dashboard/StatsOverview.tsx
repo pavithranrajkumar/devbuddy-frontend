@@ -56,7 +56,7 @@ export function StatsOverview({ stats, className }: StatsOverviewProps) {
   return (
     <Card className={className}>
       <CardHeader>
-        <CardTitle className='flex items-center justify-between'>
+        <CardTitle className='flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2'>
           <span>Applications</span>
           <div className='flex items-center gap-2 rounded-full bg-green-500/10 px-3 py-1 text-sm font-normal text-green-500'>
             <Icons.trendingUp className='h-4 w-4' />
@@ -65,7 +65,7 @@ export function StatsOverview({ stats, className }: StatsOverviewProps) {
         </CardTitle>
       </CardHeader>
       <CardContent>
-        <div className='grid gap-4 md:grid-cols-2'>
+        <div className='grid gap-4 grid-cols-1 sm:grid-cols-2'>
           {Object.entries(stats.statusBreakdown).map(([status, count]) => {
             const config = statusConfig[status as keyof typeof statusConfig];
             if (!config || count === 0) return null;
@@ -78,7 +78,7 @@ export function StatsOverview({ stats, className }: StatsOverviewProps) {
                 key={status}
                 className={cn('group relative overflow-hidden rounded-lg border p-3 transition-colors hover:border-primary', config.color)}
               >
-                <div className='flex items-center justify-between'>
+                <div className='flex items-center justify-between flex-wrap gap-2'>
                   <div className='flex items-center gap-2'>
                     <StatusIcon className='h-4 w-4' />
                     <span className='font-medium'>{config.label}</span>

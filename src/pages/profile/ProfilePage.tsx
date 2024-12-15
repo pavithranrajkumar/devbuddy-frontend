@@ -1,8 +1,12 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { PersonalInfo } from "./PersonalInfo";
 import { SkillsSection } from "./SkillsSection";
+import { useAuth } from "@/contexts/AuthContext";
 
 export function ProfilePage() {
+  const { user } = useAuth();
+  const isFreelancer = user?.userType === "freelancer";
+
   return (
     <div className="container py-6">
       <div className="mb-6">
@@ -21,15 +25,25 @@ export function ProfilePage() {
             >
               Personal Info
             </TabsTrigger>
+            {isFreelancer && (
+              <TabsTrigger
+                value="skills"
+                className="relative h-10 rounded-none border-b-2 border-b-transparent bg-white data-[state=active]:border-b-primary data-[state=active]:shadow-none hover:border-b-muted-foreground focus:outline-none focus-visible:outline-none focus-within:outline-none ring-0 focus:ring-0"
+              >
+                Skills
+              </TabsTrigger>
+            )}
           </TabsList>
         </div>
 
         <TabsContent value="personal">
           <PersonalInfo />
         </TabsContent>
-        <TabsContent value="skills">
-          <SkillsSection />
-        </TabsContent>
+        {isFreelancer && (
+          <TabsContent value="skills">
+            <SkillsSection />
+          </TabsContent>
+        )}
       </Tabs>
     </div>
   );

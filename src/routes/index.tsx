@@ -1,22 +1,22 @@
-import { Routes, Route, Navigate } from 'react-router-dom';
-import { AuthGuard } from '@/components/auth/AuthGuard';
-import { Login } from '@/components/auth/Login';
-import { Register } from '@/components/auth/Register';
-import { DashboardLayout } from '@/components/layout/DashboardLayout';
-import { DashboardPage } from '@/pages/dashboard/DashboardPage';
-import { ProfilePage } from '@/pages/profile/ProfilePage';
-import { CreateProject } from '@/components/projects/client/CreateProject';
-import { ProjectDetails } from '@/components/projects/shared/ProjectDetails';
-import { ProjectApplication } from '@/components/projects/freelancer/ProjectApplication';
-import { MyApplications } from '@/components/projects/freelancer/MyApplications';
-import { ProjectListView } from '@/components/projects/shared/ProjectListView';
+import { Routes, Route, Navigate } from "react-router-dom";
+import { AuthGuard } from "@/components/auth/AuthGuard";
+import { Login } from "@/components/auth/Login";
+import { Register } from "@/components/auth/Register";
+import { DashboardLayout } from "@/components/layout/DashboardLayout";
+import { DashboardPage } from "@/pages/dashboard/DashboardPage";
+import { ProfilePage } from "@/pages/profile/ProfilePage";
+import { CreateProject } from "@/components/projects/client/CreateProject";
+import { ProjectDetails } from "@/components/projects/shared/ProjectDetails";
+import { ProjectApplication } from "@/components/projects/freelancer/ProjectApplication";
+import { MyApplications } from "@/components/projects/freelancer/MyApplications";
+import { ProjectListView } from "@/components/projects/shared/ProjectListView";
 
 export function AppRoutes() {
   return (
     <Routes>
       {/* Auth Routes */}
       <Route
-        path='/login'
+        path="/login"
         element={
           <AuthGuard>
             <Login />
@@ -24,7 +24,7 @@ export function AppRoutes() {
         }
       />
       <Route
-        path='/register'
+        path="/register"
         element={
           <AuthGuard>
             <Register />
@@ -34,7 +34,7 @@ export function AppRoutes() {
 
       {/* Protected Dashboard Routes */}
       <Route
-        path='/dashboard'
+        path="/dashboard"
         element={
           <AuthGuard requireAuth>
             <DashboardLayout>
@@ -45,7 +45,7 @@ export function AppRoutes() {
       />
 
       <Route
-        path='/profile'
+        path="/profile"
         element={
           <AuthGuard requireAuth>
             <DashboardLayout>
@@ -56,9 +56,9 @@ export function AppRoutes() {
       />
 
       <Route
-        path='applications'
+        path="applications"
         element={
-          <AuthGuard requireAuth allowedRoles={['freelancer']}>
+          <AuthGuard requireAuth allowedRoles={["freelancer"]}>
             <DashboardLayout>
               <MyApplications />
             </DashboardLayout>
@@ -67,11 +67,11 @@ export function AppRoutes() {
       />
 
       {/* Project Routes */}
-      <Route path='/projects'>
+      <Route path="/projects">
         <Route
           index
           element={
-            <AuthGuard requireAuth allowedRoles={['freelancer']}>
+            <AuthGuard requireAuth allowedRoles={["freelancer"]}>
               <DashboardLayout>
                 <ProjectListView />
               </DashboardLayout>
@@ -80,9 +80,9 @@ export function AppRoutes() {
         />
 
         <Route
-          path='create'
+          path="create"
           element={
-            <AuthGuard requireAuth allowedRoles={['client']}>
+            <AuthGuard requireAuth allowedRoles={["client"]}>
               <DashboardLayout>
                 <CreateProject />
               </DashboardLayout>
@@ -91,7 +91,7 @@ export function AppRoutes() {
         />
 
         <Route
-          path=':id'
+          path=":id"
           element={
             <AuthGuard requireAuth>
               <DashboardLayout>
@@ -102,9 +102,9 @@ export function AppRoutes() {
         />
 
         <Route
-          path='manage'
+          path="manage"
           element={
-            <AuthGuard requireAuth allowedRoles={['client']}>
+            <AuthGuard requireAuth allowedRoles={["client"]}>
               <DashboardLayout>
                 <ProjectListView showCreateButton />
               </DashboardLayout>
@@ -113,9 +113,9 @@ export function AppRoutes() {
         />
 
         <Route
-          path=':id/apply'
+          path=":id/apply"
           element={
-            <AuthGuard requireAuth allowedRoles={['freelancer']}>
+            <AuthGuard requireAuth allowedRoles={["freelancer"]}>
               <DashboardLayout>
                 <ProjectApplication />
               </DashboardLayout>
@@ -125,7 +125,7 @@ export function AppRoutes() {
       </Route>
 
       {/* Default Route */}
-      <Route path='/' element={<Navigate to='/dashboard' replace />} />
+      <Route path="/" element={<Navigate to="/dashboard" replace />} />
     </Routes>
   );
 }

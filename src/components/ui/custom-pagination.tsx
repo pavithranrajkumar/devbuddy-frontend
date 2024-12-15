@@ -1,4 +1,12 @@
-import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious, PaginationEllipsis } from './pagination';
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+  PaginationEllipsis,
+} from "./pagination";
 
 interface CustomPaginationProps {
   currentPage: number;
@@ -7,7 +15,12 @@ interface CustomPaginationProps {
   siblingsCount?: number;
 }
 
-export function CustomPagination({ currentPage, totalPages, onPageChange, siblingsCount = 1 }: CustomPaginationProps) {
+export function CustomPagination({
+  currentPage,
+  totalPages,
+  onPageChange,
+  siblingsCount = 1,
+}: CustomPaginationProps) {
   const generatePagesArray = (start: number, end: number) => {
     return Array.from({ length: end - start + 1 }, (_, index) => start + index);
   };
@@ -26,17 +39,20 @@ export function CustomPagination({ currentPage, totalPages, onPageChange, siblin
     if (!shouldShowLeftDots && shouldShowRightDots) {
       const leftItemCount = 3 + 2 * siblingsCount;
       const leftRange = generatePagesArray(1, leftItemCount);
-      return [...leftRange, 'dots', totalPages];
+      return [...leftRange, "dots", totalPages];
     }
 
     if (shouldShowLeftDots && !shouldShowRightDots) {
       const rightItemCount = 3 + 2 * siblingsCount;
-      const rightRange = generatePagesArray(totalPages - rightItemCount + 1, totalPages);
-      return [1, 'dots', ...rightRange];
+      const rightRange = generatePagesArray(
+        totalPages - rightItemCount + 1,
+        totalPages
+      );
+      return [1, "dots", ...rightRange];
     }
 
     const middleRange = generatePagesArray(leftSiblingIndex, rightSiblingIndex);
-    return [1, 'dots', ...middleRange, 'dots', totalPages];
+    return [1, "dots", ...middleRange, "dots", totalPages];
   };
 
   return (
@@ -44,16 +60,18 @@ export function CustomPagination({ currentPage, totalPages, onPageChange, siblin
       <PaginationContent>
         <PaginationItem>
           <PaginationPrevious
-            href='#'
+            href="#"
             onClick={(e) => {
               e.preventDefault();
-              if (currentPage > 1) onPageChange(currentPage - 1);
+              if (currentPage > 1) {
+                onPageChange(currentPage - 1);
+              }
             }}
           />
         </PaginationItem>
 
         {renderPaginationItems().map((item, index) => {
-          if (item === 'dots') {
+          if (item === "dots") {
             return (
               <PaginationItem key={`dots-${index}`}>
                 <PaginationEllipsis />
@@ -64,7 +82,7 @@ export function CustomPagination({ currentPage, totalPages, onPageChange, siblin
           return (
             <PaginationItem key={item}>
               <PaginationLink
-                href='#'
+                href="#"
                 isActive={currentPage === item}
                 onClick={(e) => {
                   e.preventDefault();
@@ -79,10 +97,12 @@ export function CustomPagination({ currentPage, totalPages, onPageChange, siblin
 
         <PaginationItem>
           <PaginationNext
-            href='#'
+            href="#"
             onClick={(e) => {
               e.preventDefault();
-              if (currentPage < totalPages) onPageChange(currentPage + 1);
+              if (currentPage < totalPages) {
+                onPageChange(currentPage + 1);
+              }
             }}
           />
         </PaginationItem>
