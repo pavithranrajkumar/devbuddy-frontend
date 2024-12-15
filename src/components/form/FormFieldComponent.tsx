@@ -33,7 +33,6 @@ const isFormField = <T extends Record<string, any>>(props: FieldProps<T>): props
 export function FormFieldComponent<T extends Record<string, any>>(props: FieldProps<T>) {
   if (isFormField(props)) {
     const { form, name, label, placeholder, type = 'text', required = false, leftIcon, description } = props;
-
     return (
       <FormField
         control={form.control}
@@ -51,7 +50,6 @@ export function FormFieldComponent<T extends Record<string, any>>(props: FieldPr
                   {...field}
                   type={type}
                   placeholder={placeholder}
-                  required={required}
                   className={cn(leftIcon && 'pl-10')}
                   value={field.value || ''}
                   onChange={(e) => {
