@@ -154,3 +154,7 @@ button:focus-visible {
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
   background-color: rgba(0, 0, 0, 0.2);
 }
+
+.w-screen {
+  width: 98vw !important;
+}
