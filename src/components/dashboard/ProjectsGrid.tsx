@@ -23,7 +23,7 @@ export function ProjectsGrid({ projects }: ProjectsGridProps) {
     <div className='space-y-4'>
       <div className='flex items-center justify-between'>
         <h2 className='text-lg font-semibold tracking-tight'>Matching Projects</h2>
-        <Button variant='ghost' size='sm'>
+        <Button variant='secondary' size='sm'>
           View All
           <Icons.arrowRight className='ml-2 h-4 w-4' />
         </Button>

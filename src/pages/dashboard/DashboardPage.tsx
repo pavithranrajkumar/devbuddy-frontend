@@ -5,5 +5,5 @@ import { FreelancerDashboard } from './FreelancerDashboard';
 export function DashboardPage() {
   const { user } = useAuth();
 
-  return user?.userType === 'client' ? <ClientDashboard user={user} /> : <FreelancerDashboard user={user!} />;
+  return user?.userType === 'client' ? <ClientDashboard user={user} /> : <FreelancerDashboard />;
 }

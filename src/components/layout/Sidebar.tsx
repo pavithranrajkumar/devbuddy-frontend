@@ -108,7 +108,7 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
               to={item.href}
               className={({ isActive }) =>
                 cn(
-                  'flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors',
+                  'flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors relative',
                   isActive || (item.href === '/projects/manage' && window.location.pathname.startsWith('/projects'))
                     ? 'bg-primary text-white'
                     : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
@@ -116,7 +116,14 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
               }
             >
               <item.icon className={cn('h-5 w-5', isOpen ? 'mr-3' : 'mr-0')} />
-              {isOpen && <span>{item.title}</span>}
+              <span
+                className={cn(
+                  'transition-all duration-300 whitespace-nowrap',
+                  isOpen ? 'opacity-100 visible relative' : 'opacity-0 invisible absolute'
+                )}
+              >
+                {item.title}
+              </span>
             </NavLink>
           ))}
         </nav>
