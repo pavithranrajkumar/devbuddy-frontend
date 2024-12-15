@@ -13,43 +13,55 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
 import { cleanObject } from '@/lib/utils';
 
+// Separate schemas for client and freelancer
+const baseSchema = z.object({
+  name: z.string().min(2, 'Name must be at least 2 characters'),
+  email: z.string().email('Invalid email address'),
+  password: z.string().min(6, 'Password must be at least 6 characters'),
+  confirmPassword: z.string(),
+  userType: z.enum(['client', 'freelancer']),
+});
+
+const freelancerSchema = z.object({
+  title: z.string().min(2, 'Title is required'),
+  bio: z.string().min(10, 'Bio must be at least 10 characters'),
+  hourlyRate: z.number().min(0, 'Hourly rate must be at least 0').max(1000, 'Hourly rate must not exceed 1000').optional(),
+  linkedinUrl: z.string().url('Invalid LinkedIn URL').optional().or(z.literal('')),
+  githubUrl: z.string().url('Invalid GitHub URL').optional().or(z.literal('')),
+  experienceYears: z.number().min(0, 'Years must be at least 0').max(50, 'Years must not exceed 50'),
+  experienceMonths: z.number().min(0, 'Months must be at least 0').max(11, 'Months must not exceed 11'),
+});
+
 const formSchema = z
-  .object({
-    name: z.string().min(2, 'Name must be at least 2 characters'),
-    email: z.string().email('Invalid email address'),
-    password: z.string().min(6, 'Password must be at least 6 characters'),
-    confirmPassword: z.string(),
-    userType: z.enum(['client', 'freelancer']),
-    title: z.string().optional(),
-    bio: z.string().optional(),
-    hourlyRate: z
-      .string()
-      .transform((val) => (val ? Number(val) : undefined))
-      .optional(),
-    linkedinUrl: z.string().url('Invalid LinkedIn URL').optional().or(z.literal('')),
-    githubUrl: z.string().url('Invalid GitHub URL').optional().or(z.literal('')),
-    experienceYears: z
-      .string()
-      .transform((val) => (val ? Number(val) : undefined))
-      .optional(),
-    experienceMonths: z
-      .string()
-      .transform((val) => (val ? Number(val) : undefined))
-      .optional(),
-  })
+  .discriminatedUnion('userType', [
+    z.object({
+      ...baseSchema.omit({ userType: true }).shape,
+      userType: z.literal('client'),
+    }),
+    z.object({
+      ...baseSchema.omit({ userType: true }).shape,
+      userType: z.literal('freelancer'),
+      ...freelancerSchema.shape,
+    }),
+  ])
   .refine((data) => data.password === data.confirmPassword, {
     message: "Passwords don't match",
     path: ['confirmPassword'],
   })
-  .transform((data) => ({
-    ...data,
-    experienceInMonths: data.experienceYears || data.experienceMonths ? (data.experienceYears || 0) * 12 + (data.experienceMonths || 0) : undefined,
-  }));
+  .transform((data) => {
+    if (data.userType === 'freelancer') {
+      return {
+        ...data,
+        experienceInMonths: data.experienceYears * 12 + data.experienceMonths,
+      };
+    }
+    return data;
+  });
 
 type FormData = z.infer<typeof formSchema>;
 
 export function Register() {
-  const { register, isAuthenticating } = useAuth();
+  const { register: authRegister, isAuthenticating } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
 
@@ -61,20 +73,17 @@ export function Register() {
       password: '',
       confirmPassword: '',
       userType: 'client',
-      title: '',
-      bio: '',
-      hourlyRate: undefined,
-      experienceYears: 0,
-      experienceMonths: 0,
-    },
-    mode: 'onBlur',
+    } as FormData,
+    mode: 'onChange',
   });
+
+  const userType = form.watch('userType');
 
   const onSubmit = async (values: FormData) => {
     try {
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const { confirmPassword, ...registerData } = cleanObject(values);
-      await register(cleanObject(registerData));
+      const { confirmPassword, ...registerData } = values;
+      await authRegister(cleanObject(registerData));
       toast({
         title: 'Success!',
         description: 'Your account has been created',
@@ -83,10 +92,15 @@ export function Register() {
     } catch (error) {
       toast({
         variant: 'destructive',
-        title: 'Error',
-        description: error instanceof Error ? error.message : 'Registration failed',
+        title: 'Registration Failed',
+        description: error instanceof Error ? error.message : 'An error occurred during registration. Please try again.',
       });
     }
+  };
+
+  const handleSocialAuth = (provider: 'github' | 'google') => {
+    // Implement social authentication
+    console.log(`${provider} authentication clicked`);
   };
 
   return (
@@ -125,12 +139,9 @@ export function Register() {
 
       {/* Right side - Register Form with enhanced styling */}
       <div className='w-full lg:w-1/3 flex items-center justify-center p-8 bg-white dark:bg-slate-900'>
-        <div className='w-full'>
-          <div className='lg:hidden text-center mb-8'>
-            <h1 className='text-3xl font-bold text-slate-900 dark:text-slate-100'>DevBuddy</h1>
-            <p className='text-slate-600 dark:text-slate-400'>Create your account</p>
-          </div>
-
+        <div className='w-full max-w-md'>
+          {' '}
+          {/* Added max-width for better readability */}
           <Card className='shadow-none border-0 bg-white/50 dark:bg-slate-900'>
             <CardHeader className='space-y-1 pb-8'>
               <CardTitle className='text-2xl font-bold text-center'>Create an account</CardTitle>
@@ -149,62 +160,54 @@ export function Register() {
                     <FormFieldComponent form={form} name='confirmPassword' label='Confirm Password' placeholder='••••••••' type='password' required />
                   </div>
 
-                  <div className='space-y-3'>
-                    <FormField
-                      control={form.control}
-                      name='userType'
-                      render={({ field }) => (
-                        <FormItem className='space-y-3'>
-                          <FormLabel>I want to...</FormLabel>
-                          <FormControl>
-                            <RadioGroup onValueChange={field.onChange} defaultValue={field.value} className='grid grid-cols-2 gap-4'>
-                              <div>
-                                <RadioGroupItem value='client' id='client' className='peer sr-only' />
-                                <Label
-                                  htmlFor='client'
-                                  className='flex flex-col items-center justify-between rounded-md border-2 border-muted bg-white p-4 hover:bg-slate-100 peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary'
-                                >
-                                  <Icons.user className='mb-2 h-6 w-6' />
-                                  <span>Hire Developers</span>
-                                </Label>
-                              </div>
-                              <div>
-                                <RadioGroupItem value='freelancer' id='freelancer' className='peer sr-only' />
-                                <Label
-                                  htmlFor='freelancer'
-                                  className='flex flex-col items-center justify-between rounded-md border-2 border-muted bg-white p-4 hover:bg-slate-100 peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary'
-                                >
-                                  <Icons.code className='mb-2 h-6 w-6' />
-                                  <span>Work as Developer</span>
-                                </Label>
-                              </div>
-                            </RadioGroup>
-                          </FormControl>
-                        </FormItem>
-                      )}
-                    />
-                  </div>
+                  <FormField
+                    control={form.control}
+                    name='userType'
+                    render={({ field }) => (
+                      <FormItem className='space-y-3'>
+                        <FormLabel>I want to...</FormLabel>
+                        <FormControl>
+                          <RadioGroup onValueChange={field.onChange} defaultValue={field.value} className='grid grid-cols-2 gap-4'>
+                            <div>
+                              <RadioGroupItem value='client' id='client' className='peer sr-only' />
+                              <Label
+                                htmlFor='client'
+                                className='flex flex-col items-center justify-between rounded-md border-2 border-muted bg-white p-4 hover:bg-slate-100 peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary'
+                              >
+                                <Icons.user className='mb-2 h-6 w-6' />
+                                <span>Hire Developers</span>
+                              </Label>
+                            </div>
+                            <div>
+                              <RadioGroupItem value='freelancer' id='freelancer' className='peer sr-only' />
+                              <Label
+                                htmlFor='freelancer'
+                                className='flex flex-col items-center justify-between rounded-md border-2 border-muted bg-white p-4 hover:bg-slate-100 peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary'
+                              >
+                                <Icons.code className='mb-2 h-6 w-6' />
+                                <span>Work as Developer</span>
+                              </Label>
+                            </div>
+                          </RadioGroup>
+                        </FormControl>
+                      </FormItem>
+                    )}
+                  />
 
-                  {form.watch('userType') === 'freelancer' && (
+                  {userType === 'freelancer' && (
                     <div className='space-y-4 pt-4 border-t'>
                       <div className='grid grid-cols-2 gap-4'>
-                        <FormFieldComponent
-                          form={form}
-                          name='experienceYears'
-                          label='Experience (Years)'
-                          placeholder='e.g. 3'
-                          type='number'
-                          required={false}
-                        />
+                        <FormFieldComponent form={form} name='experienceYears' label='Experience (Years)' placeholder='0-50' type='number' required />
                         <FormFieldComponent
                           form={form}
                           name='experienceMonths'
                           label='Experience (Months)'
-                          placeholder='e.g. 6'
+                          placeholder='0-11'
                           type='number'
-                          required={false}
+                          required
                         />
                       </div>
+
                       <FormFieldComponent
                         form={form}
                         name='title'
@@ -213,9 +216,9 @@ export function Register() {
                         required
                       />
 
-                      <FormFieldComponent form={form} name='bio' label='Bio' placeholder='Tell us about yourself and your experience' required />
+                      <FormFieldComponent form={form} name='bio' label='Bio' placeholder='Tell us about yourself (minimum 10 characters)' required />
 
-                      <FormFieldComponent form={form} name='hourlyRate' label='Hourly Rate ($)' placeholder='e.g. 50' type='text' required={false} />
+                      <FormFieldComponent form={form} name='hourlyRate' label='Hourly Rate ($)' placeholder='0-1000' type='number' />
 
                       <FormFieldComponent form={form} name='linkedinUrl' label='LinkedIn URL' placeholder='https://linkedin.com/in/yourprofile' />
 
@@ -244,11 +247,11 @@ export function Register() {
                   </div>
 
                   <div className='grid grid-cols-2 gap-4'>
-                    <Button variant='outline' className='h-11 bg-white dark:bg-slate-900'>
+                    <Button type='button' variant='outline' className='h-11 bg-white dark:bg-slate-900' onClick={() => handleSocialAuth('github')}>
                       <Icons.gitHub className='mr-2 h-4 w-4' />
                       GitHub
                     </Button>
-                    <Button variant='outline' className='h-11 bg-white dark:bg-slate-900'>
+                    <Button type='button' variant='outline' className='h-11 bg-white dark:bg-slate-900' onClick={() => handleSocialAuth('google')}>
                       <Icons.google className='mr-2 h-4 w-4' />
                       Google
                     </Button>
